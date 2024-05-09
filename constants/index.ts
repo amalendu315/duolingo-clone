@@ -1,5 +1,6 @@
 const protectedRoutes : string[] = [
-    "/learn(.*)"
+    "/learn(.*)",
+    "/courses(.*)"
 ];
 
 interface SidebarItems {

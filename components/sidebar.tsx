@@ -1,14 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Loader } from "lucide-react";
+import { ClerkLoading, ClerkLoaded, UserButton } from "@clerk/nextjs";
 
 import { cn } from "@/lib/utils";
 import { sidebarItems } from "@/constants";
 import { SidebarItem } from "./sidebar-item";
 
-
 type Props = {
-    className?:string
-}
+  className?: string;
+};
 
 export const Sidebar = ({ className }: Props) => {
   return (
@@ -29,11 +30,20 @@ export const Sidebar = ({ className }: Props) => {
       <div className="flex flex-col gap-y-2 flex-1">
         {sidebarItems?.map((item) => (
           <SidebarItem
+            key={item.label}
             label={item.label}
             href={item.href}
             iconSrc={item.imageSrc}
           />
         ))}
+      </div>
+      <div className="p-4">
+        <ClerkLoading>
+          <Loader className="h-5 w-5 text-muted-foreground animate-spin" />
+        </ClerkLoading>
+        <ClerkLoaded>
+          <UserButton afterSignOutUrl="/" />
+        </ClerkLoaded>
       </div>
     </div>
   );
