@@ -35,7 +35,10 @@ const sidebarItems: SidebarItems[] = [
   },
 ];
 
+const POINTS_TO_REFILL = 10;
+
 export {
     protectedRoutes,
     sidebarItems,
+    POINTS_TO_REFILL
 };

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Confetti from "react-confetti";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { useAudio, useWindowSize } from "react-use";
+import { useAudio, useWindowSize, useMount } from "react-use";
 
 import { Header } from "./header";
 import { Footer } from "./footer";
@@ -13,7 +13,9 @@ import { Challenge } from "./challenge";
 import { ResultCard } from "./result-card";
 import { QuestionBubble } from "./question-bubble";
 import { reduceHearts } from "@/actions/user-progress";
+import { useHeartsModal } from "@/store/use-hearts-modal";
 import { challengeOptions, challenges } from "@/db/schema";
+import { usePracticeModal } from "@/store/use-practice-modal";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
 
 type Props = {
@@ -34,6 +36,15 @@ export const Quiz = ({
   initialLessonChallenges,
   userSubscription
 }: Props) => {
+  const { open: openHeartsModal } = useHeartsModal();
+  const { open: openPracticeModal } = usePracticeModal();
+
+  useMount(()=>{
+    if(initialPercentage === 100){
+      openPracticeModal();
+    }
+  });
+
   const { width, height } = useWindowSize()
   const router = useRouter();
   const [correctAudio, _c, correctControls] = useAudio({ src: "/correct.wav" });
@@ -47,7 +58,9 @@ export const Quiz = ({
     const [pending, startTransition] = useTransition();
     const [lessonId] = useState(initialLessonId)
     const [hearts, setHearts] = useState(initialHearts);
-    const [percentage, setPercentage] = useState(initialPercentage);
+    const [percentage, setPercentage] = useState(()=>{
+      return initialPercentage === 100 ? 0 : initialPercentage;
+    });
     const [challenges] = useState(initialLessonChallenges);
     const [activeIndex, setActiveIndex] = useState(()=>{
       const uncompletedIndex = challenges.findIndex((challenge)=>!challenge.completed);
@@ -86,7 +99,7 @@ export const Quiz = ({
         startTransition(()=>{
           upsertChallengeProgress(challenge.id).then((response)=>{
             if(response?.error === "hearts"){
-              console.error("Missing Hearts");
+              openHeartsModal();
               return;
             }
             correctControls.play();
@@ -101,7 +114,7 @@ export const Quiz = ({
         startTransition(()=>{
           reduceHearts(challenge.id).then((response)=>{
             if(response?.error === "hearts"){
-              console.error("Missing Hearts");
+              openHeartsModal();
               return;
             };
             incorrectControls.play();
