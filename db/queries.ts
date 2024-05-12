@@ -86,6 +86,7 @@ export const getCourseProgress = cache(async () => {
   if (!userId || !userProgress?.activeCourseId) {
     return null;
   }
+  
   const unitsInActiveCourse = await db.query.units.findMany({
     orderBy: (units, { asc }) => [asc(units.order)],
     where: eq(units.courseId, userProgress.activeCourseId),
