@@ -1,7 +1,9 @@
-const protectedRoutes : string[] = [
-    "/learn(.*)",
-    "/courses(.*)",
-    "/lesson(.*)",
+const protectedRoutes: string[] = [
+  "/learn(.*)",
+  "/courses(.*)",
+  "/lesson(.*)",
+  "/quests",
+  "/leaderboard",
 ];
 
 interface SidebarItems {
